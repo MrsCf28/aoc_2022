@@ -9,11 +9,12 @@ fun main() {
 fun findDistinctSubStr(input: String, len: Int): Int {
     for (i in input.indices) {
         val subStr = input.substring(i, i + len)
-        val distinctSubStr = subStr.split("").distinct().joinToString("").length
+        val distinctSubStr = subStr.toSet().size
 
         if (subStr.length == distinctSubStr) {
             return i + len
         }
     }
+
     return 0
 }

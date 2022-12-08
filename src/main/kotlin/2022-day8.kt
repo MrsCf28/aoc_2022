@@ -5,16 +5,22 @@ fun main() {
     val lengthOfForest = input.size
     val numOfOutsideTrees = 2 * (widthOfForest + lengthOfForest - 2)
 
-    var visibleTrees = 0
+    var visibleTrees = numOfOutsideTrees
+    var maxScenicScore = 0
 
     for (row in 1 until lengthOfForest - 1) {
         for (column in 1 until widthOfForest - 1) {
             if (isVisible(row, column, input, input[row][column].digitToInt())) {
                 visibleTrees++
             }
+            val currentScenicScore = getScenicScore(row, column, input, input[row][column].digitToInt())
+            if (currentScenicScore > maxScenicScore) {
+                maxScenicScore = currentScenicScore
+            }
         }
     }
-    println(visibleTrees + numOfOutsideTrees)
+    println("number of visible trees: $visibleTrees")
+    println("max scenic score $maxScenicScore")
 }
 
 fun isVisible(row: Int, column: Int, input: List<String>, thisTree: Int): Boolean {
@@ -53,5 +59,47 @@ fun isVisible(row: Int, column: Int, input: List<String>, thisTree: Int): Boolea
     }
 
     return (directions[0] || directions[1] || directions[2] || directions[3])
+
+}
+
+fun getScenicScore(row: Int, column: Int, input: List<String>, thisTree: Int): Int {
+    var countAbove = 0
+    var countBelow = 0
+    var countLeft = 0
+    var countRight = 0
+
+    // score above
+    for (i in row - 1 downTo 0) {
+        countAbove++
+        if (thisTree <= input[i][column].digitToInt()) {
+            break
+        }
+    }
+
+    // score below
+    for (i in row + 1 until input.size) {
+        countBelow++
+        if (thisTree <= input[i][column].digitToInt()) {
+            break
+        }
+    }
+
+    // score left
+    for (i in column - 1 downTo 0) {
+        countLeft++
+        if (thisTree <= input[row][i].digitToInt()) {
+            break
+        }
+    }
+
+    // score right
+    for (i in column + 1 until input[0].length) {
+        countRight++
+        if (thisTree <= input[row][i].digitToInt()) {
+            break
+        }
+    }
+
+    return (countAbove * countBelow * countLeft * countRight)
 
 }

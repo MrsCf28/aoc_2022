@@ -1,10 +1,14 @@
-private val input = readResourceFile("2022-day11-sample.txt").split("\n\n")
+private val input = readResourceFile("2022-day11.txt").split("\n\n")
 
 fun main() {
     // parse input
     val monkeyList = mutableListOf<Monkey>()
+    var lcm = 1;
     for (monkey in input) {
         monkeyList.add(readInput(monkey.split("\n")))
+    }
+    for (monkey in monkeyList) {
+        lcm *= monkey.divisibleTest
     }
 
     val monkeyList2 = mutableListOf<Monkey>()
@@ -22,17 +26,12 @@ fun main() {
             }
             monkey.itemsHeld.clear()
         }
-//        println("cycle ${it + 1}")
-//        for (monkey in monkeyList) {
-//            println("monkey ${monkey.num} is holding ${monkey.itemsHeld}")
-//        }
     }
 
     // PART 1 calculations with number of items inspected
     val numOfItemsInspected = mutableListOf<Int>()
     for (monkey in monkeyList) {
         numOfItemsInspected.add(monkey.itemsInspected)
-        println("monkey ${monkey.num} inspected ${monkey.itemsInspected} items")
     }
     val numOfItemsDesc = numOfItemsInspected.sortedDescending()
     val monkeyBusiness = numOfItemsDesc[0] * numOfItemsDesc[1]
@@ -40,19 +39,23 @@ fun main() {
 
     // PART 2 10000 rounds of Monkey Business
     repeat(10000) {
-        for (monkey in monkeyList) {
+        for (monkey in monkeyList2) {
             for (item in monkey.itemsHeld) {
-                val worryItem = monkey.operate(item)
+                val worryItem = monkey.operate(item) % lcm
                 monkey.itemsInspected++
-                monkeyList[monkey.throwTo(worryItem)].itemsHeld.add(worryItem)
+                monkeyList2[monkey.throwTo(worryItem)].itemsHeld.add(worryItem)
             }
             monkey.itemsHeld.clear()
         }
-        println("cycle ${it + 1}")
-        for (monkey in monkeyList) {
-            println("monkey ${monkey.num} is holding ${monkey.itemsHeld}")
-        }
     }
+    // PART 2 calculations with number of items inspected
+    val numOfItemsInspected2 = mutableListOf<Int>()
+    for (monkey in monkeyList2) {
+        numOfItemsInspected2.add(monkey.itemsInspected)
+    }
+    val numOfItemsDesc2 = numOfItemsInspected2.sortedDescending()
+    val monkeyBusiness2 = numOfItemsDesc2[0].toLong() * numOfItemsDesc2[1].toLong()
+    println("monkey Business: $monkeyBusiness2")
 }
 
 data class Monkey(
@@ -77,6 +80,7 @@ data class Monkey(
     fun newItemValue(item: Long): Long {
         return operate(item) / 3
     }
+
     fun throwTo(item: Long): Int {
         return if (item % divisibleTest == 0L) {
             trueMonkey
@@ -88,7 +92,7 @@ data class Monkey(
 
 fun readInput(lines: List<String>): Monkey {
     val num: Int = lines[0][7].digitToInt()
-    val itemsHeld: MutableList<Long> = lines[1].substring(18).split(", ").map {it.toLong()}.toMutableList()
+    val itemsHeld: MutableList<Long> = lines[1].substring(18).split(", ").map { it.toLong() }.toMutableList()
     val operator: Char = lines[2][23]
 
     val operand: Int? = lines[2].substring(25).trim().toIntOrNull()

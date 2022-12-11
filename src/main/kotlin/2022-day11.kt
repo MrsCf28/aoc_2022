@@ -1,20 +1,12 @@
-private val input = readResourceFile("2022-day11.txt").split("\n\n")
+private val input = readResourceFile("2022-day11.txt").split("\n\n").map { it.split("\n") }
 
 fun main() {
+    println(input)
     // parse input
-    val monkeyList = mutableListOf<Monkey>()
-    var lcm = 1;
-    for (monkey in input) {
-        monkeyList.add(readInput(monkey.split("\n")))
-    }
-    for (monkey in monkeyList) {
-        lcm *= monkey.divisibleTest
-    }
+    val monkeyList = input.map { readInput(it) }
+    val monkeyList2 = input.map { readInput(it) }
 
-    val monkeyList2 = mutableListOf<Monkey>()
-    for (monkey in input) {
-        monkeyList2.add(readInput(monkey.split("\n")))
-    }
+    val lcm = monkeyList.map { it.divisibleTest }.reduce { acc, element -> acc * element}
 
     // PART 1 20 rounds of Monkey Business
     repeat(20) {
@@ -29,12 +21,8 @@ fun main() {
     }
 
     // PART 1 calculations with number of items inspected
-    val numOfItemsInspected = mutableListOf<Int>()
-    for (monkey in monkeyList) {
-        numOfItemsInspected.add(monkey.itemsInspected)
-    }
-    val numOfItemsDesc = numOfItemsInspected.sortedDescending()
-    val monkeyBusiness = numOfItemsDesc[0] * numOfItemsDesc[1]
+    val numOfItemsInspected = monkeyList.map { it.itemsInspected }.sortedDescending()
+    val monkeyBusiness = numOfItemsInspected[0] * numOfItemsInspected[1]
     println("monkey Business: $monkeyBusiness")
 
     // PART 2 10000 rounds of Monkey Business
@@ -49,12 +37,8 @@ fun main() {
         }
     }
     // PART 2 calculations with number of items inspected
-    val numOfItemsInspected2 = mutableListOf<Int>()
-    for (monkey in monkeyList2) {
-        numOfItemsInspected2.add(monkey.itemsInspected)
-    }
-    val numOfItemsDesc2 = numOfItemsInspected2.sortedDescending()
-    val monkeyBusiness2 = numOfItemsDesc2[0].toLong() * numOfItemsDesc2[1].toLong()
+    val numOfItemsInspected2 = monkeyList2.map { it.itemsInspected }.sortedDescending()
+    val monkeyBusiness2 = numOfItemsInspected2[0].toLong() * numOfItemsInspected2[1].toLong()
     println("monkey Business: $monkeyBusiness2")
 }
 

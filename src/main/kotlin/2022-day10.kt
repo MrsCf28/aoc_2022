@@ -6,11 +6,7 @@ fun main() {
     var sum = 0
     var position = 0
     for (line in input) {
-        if (x == position || x + 1 == position || x - 1 == position) {
-            print('#')
-        } else {
-            print('.')
-        }
+        printPixel(position, x)
         cycle++
         position++
         if (position % 40 == 0) {
@@ -20,12 +16,8 @@ fun main() {
         if (isProminentCycle(cycle)) {
             sum += x * cycle
         }
-        if (line.startsWith("addx")) {
-            if (x == position || x + 1 == position || x - 1 == position) {
-                print('#')
-            } else {
-                print('.')
-            }
+        if (line.startsWith("add")) {
+            printPixel(position, x)
             cycle++
             position++
             if (position % 40 == 0) {
@@ -45,4 +37,16 @@ fun main() {
 fun isProminentCycle(cycle: Int): Boolean {
     val prominentCycles = listOf(20, 60, 100, 140, 180, 220)
     return prominentCycles.contains(cycle)
+}
+
+fun printPixel(position: Int, x: Int) {
+    if (position in x-1..x+1) {
+        print('#')
+    } else {
+        print('.')
+    }
+}
+
+fun tick() {
+
 }
